@@ -1,28 +1,12 @@
 #!/usr/bin/env node
-import React from 'react';
-import {render} from 'ink';
-import meow from 'meow';
-import App from './app.js';
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers'
+import { ImportCommandModule } from './commands/ImportCommand.js';
 
-const cli = meow(`
-	Usage
-	  $ g666
-
-	Options
-		--name  Your name
-
-	Examples
-	  $ g666 --name=Jane
-	  Hello, Jane
-`,
-	{
-		importMeta: import.meta,
-		flags: {
-			name: {
-				type: 'string',
-			},
-		},
-	},
-);
-
-render(<App name={cli.flags.name} />);
+yargs(hideBin(process.argv))
+	.scriptName('g666')
+	.usage('$0 <command>')
+	.command(new ImportCommandModule())
+	.demandCommand()
+	.help()
+	.parse()
