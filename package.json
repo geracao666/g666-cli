@@ -17,12 +17,16 @@
 	],
 	"dependencies": {
 		"ink": "^4.1.0",
+		"ramda": "^0.29.1",
 		"react": "^18.2.0",
+		"xml-flow": "^1.0.4",
 		"yargs": "^17.7.2"
 	},
 	"devDependencies": {
 		"@sindresorhus/tsconfig": "^3.0.1",
+		"@types/ramda": "^0.29.10",
 		"@types/react": "^18.0.32",
+		"@types/xml-flow": "^1.0.4",
 		"@types/yargs": "^17.0.32",
 		"@vdemedes/prettier-config": "^2.0.1",
 		"ava": "^5.2.0",

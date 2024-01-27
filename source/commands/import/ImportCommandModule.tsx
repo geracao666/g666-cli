@@ -1,20 +1,9 @@
-import React from 'react';
-import {Text, render} from 'ink';
 import { ArgumentsCamelCase, CommandModule } from 'yargs';
+import { render } from 'ink';
+import ImportCommand, { ImportCommandProps } from './ImportCommand.js';
+import React from 'react';
 
-type ImportCommandProps = {
-  file: string
-};
-
-const ImportCommand = ({file}: ImportCommandProps) => {
-	return (
-		<Text>
-			Importando: {file}
-		</Text>
-	);
-}
-
-export class ImportCommandModule<U extends ImportCommandProps> implements CommandModule<{}, U> {
+export default class ImportCommandModule<U extends ImportCommandProps> implements CommandModule<{}, U> {
   public command = 'import'
   public describe = `Import discographies from a Blogger's XML.`
   public builder = {

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers'
-import { ImportCommandModule } from './commands/ImportCommand.js';
+import { ImportCommandModule } from './commands/import/index.js';
 
 yargs(hideBin(process.argv))
 	.scriptName('g666')
