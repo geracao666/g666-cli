@@ -1,60 +1,64 @@
-import React, { useEffect, useState } from 'react';
-import {Box, Static, Text } from 'ink';
-import fs from 'node:fs/promises'
-import xmlFlow from 'xml-flow'
-import * as R from 'ramda'
+import React from 'react';
+import { Box, Text } from 'ink';
+import { ImportCommandProps } from './types.js';
 
-export type ImportCommandProps = {
-  file: string
-};
-
-type Artist = {
-  name: string;
-  origin: string;
-  tags: string[]
-}
-
-export default function ImportCommand({file}: ImportCommandProps) {  
-  const [artists, setArtists] = useState<Artist[]>([])
-
-  useEffect(() => {
-    fs.open(file, 'r').then((fileHandle) => {
-      const reader = fileHandle.createReadStream({ autoClose: true })
-      const xmlStream = xmlFlow(reader)
-
-      xmlStream.on('tag:entry', (entry: any) => {
-        const artistName = entry.title.$text
-        const isArtist = R.is(Array, entry.category)
-          ? !!R.find(({ term }: { term: string }) => term === artistName, entry.category)
-          : entry.category.term === artistName
-
-        const rawTags = R.is(Array, entry.category) ? R.pluck('term', entry.category) : [entry.category.term]
-        const [origin, tags] = R.pipe(
-          R.filter((tag: string) => !tag.startsWith('http://') && tag !== artistName),
-          R.partition(R.startsWith('*'))
-        )(rawTags)
-
-        const artist = {
-          name: artistName,
-          origin: R.replace('* ', '', origin.at(0) ?? ''),
-          tags: R.map(R.pipe(
-            R.toLower,
-            R.replace('# ', '')
-          ), tags)
-        }
-
-        isArtist && setArtists((currentArtists) => [...currentArtists, artist])
-      })
-    })
-  }, [file])
+export default function ImportCommand({ file, artists, status }: ImportCommandProps) {
+  const importedArtists = artists.filter(({ status }) => status === 'done')
+  const failedArtists = artists.filter(({ status }) => status === 'error')
+  const lastFailedArtist = failedArtists.at(-1)
+  const lastImportedArtistIndex = artists.findLastIndex(({ status }) => status === 'done' || status === 'error')
+  const importingArtist = artists.at(lastImportedArtistIndex === -1 ? 0 : lastImportedArtistIndex + 1)
 
 	return (
-		<Static items={artists}>
-      {artist => (
-        <Box marginBottom={1}>
-          <Text>{JSON.stringify(artist)}</Text>
+		<Box flexDirection="column" margin={1}>
+      <Box flexDirection="column">
+        <Box>
+          <Text inverse>IMPORT FILE</Text>
+          <Text>&nbsp;{file}</Text>
         </Box>
-      )}      
-		</Static>
+
+        <Box>
+          <Text inverse>LOADING</Text>
+          <Text>&nbsp;{artists.length} artists found.</Text>
+        </Box>
+      </Box>
+
+      {status !== 'loading' && (
+        <Box flexDirection="column" marginY={1}>
+          <Box flexDirection="column">
+            <Box>
+              <Text color="cyanBright" inverse>IMPORTING</Text>
+              <Text color="cyanBright">&nbsp;{importedArtists.length}/{artists.length} discographies imported.</Text>
+            </Box>
+
+            {failedArtists.length > 0 && (
+              <Box>
+                <Text color="redBright" inverse>ERROR</Text>
+                <Text color="redBright">&nbsp;{failedArtists.length} imports failed.</Text>
+              </Box>
+            )}
+
+            {lastFailedArtist && (
+              <Box>
+                <Text color="redBright" inverse>ERROR MESSAGE</Text>
+                <Text color="redBright">&nbsp;{lastFailedArtist.errorMessage}</Text>
+              </Box>
+            )}
+
+            {importingArtist && (
+              <Box marginTop={1}>
+                <Text>Importing "{importingArtist.payload.name}" discography...</Text>
+              </Box>
+            )}
+          </Box>
+        </Box>
+      )}
+
+      {status === 'done' && (
+        <Box>
+          <Text color="green" inverse>IMPORT COMPLETED</Text>
+        </Box>
+      )}
+    </Box>
 	);
 }

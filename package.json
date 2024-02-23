@@ -16,7 +16,10 @@
 		"dist"
 	],
 	"dependencies": {
+		"dotenv": "^16.4.5",
+		"got": "^14.2.0",
 		"ink": "^4.1.0",
+		"node-html-parser": "^6.1.12",
 		"ramda": "^0.29.1",
 		"react": "^18.2.0",
 		"xml-flow": "^1.0.4",
