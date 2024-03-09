@@ -67,7 +67,7 @@ export const importArtist = async (artistImport: ArtistImport) => {
       }))
     }
 
-    await api.post<Artist>('artist', { json: payload }).json()
+    await api.post<Artist>('artist/import', { json: payload }).json()
     await sleep(1000)
 
     artistImport.status = 'done'
