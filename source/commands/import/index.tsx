@@ -19,6 +19,7 @@ const importCommandModule: CommandModule<{}, ImportCommandArgs> = {
     limit: {
       number: true,
       default: -1,
+      alias: 'l',
       describe: 'Limit the number of discographies imported.'
     },
 
