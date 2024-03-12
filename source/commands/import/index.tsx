@@ -20,6 +20,13 @@ const importCommandModule: CommandModule<{}, ImportCommandArgs> = {
       number: true,
       default: -1,
       describe: 'Limit the number of discographies imported.'
+    },
+
+    timeout: {
+      number: true,
+      default: 1000,
+      alias: 't',
+      describe: 'Timeout between each request in milliseconds.'
     }
   },
 

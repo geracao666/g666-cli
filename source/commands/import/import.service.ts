@@ -41,7 +41,10 @@ export const loadArtists = async (
 /**
  * Import an artist using the G666 Admin API.
  */
-export const importArtist = async (artistImport: ArtistImport) => {
+export const importArtist = async (
+  artistImport: ArtistImport,
+  { timeout = 1000 }: { timeout?: number } = {}
+) => {
   try {
     const { payload: artist } = artistImport
     const images = await Promise.allSettled([
@@ -68,7 +71,7 @@ export const importArtist = async (artistImport: ArtistImport) => {
     }
 
     await api.post<Artist>('artist/import', { json: payload }).json()
-    await sleep(1000)
+    await sleep(timeout)
 
     artistImport.status = 'done'
   } catch (err) {
