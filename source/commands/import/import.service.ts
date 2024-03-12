@@ -13,6 +13,7 @@ import got, { RequestError } from "got"
 export const loadArtists = async (
   file: string,
   limit: number,
+  filter: string,
   onUpdateArtists: (artists: ArtistImport[]) => void
 ) => {
   const fileHandle = await fs.open(file, 'r')
@@ -28,7 +29,12 @@ export const loadArtists = async (
       }
 
       const artist = extractArtist(entry)
-      if (artist) {
+      if (!artist) {
+        return
+      }
+
+      const re = new RegExp(filter, 'i')
+      if (artist.name.match(re)) {
         artists.push({ status: 'queued', payload: artist })
         onUpdateArtists(artists)
       }

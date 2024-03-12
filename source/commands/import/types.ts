@@ -3,6 +3,8 @@ import { Arguments } from "yargs";
 export type ImportCommandArgs = Arguments & {
   file: string
   limit: number
+  timeout: number
+  filter: string
 }
 
 export type ImportCommandProps = {
